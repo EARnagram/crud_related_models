@@ -2,6 +2,8 @@ require 'erb'
 
 include FileUtils
 
+@options = {}
+
 def read_contents(file)
   if File.exists? file
     File.read(file).strip
@@ -28,10 +30,13 @@ def erb_parse(file, log=true)
   ERB.new(read_contents(file_name)).result(binding)
 end
 
-def include_partial(file)
+def include_partial(file, options={})
+  @options = options
   file_name = File.expand_path("../source/#{file}.erb", __FILE__)
   puts "  - Including partial: #{file_name}"
-  erb_parse file_name, false
+  contents = erb_parse file_name, false
+  @options = {}
+  contents
 end
 
 desc "Build the files in /source and deposit in /dist"

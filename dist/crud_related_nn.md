@@ -9,8 +9,8 @@ how to structure the models, views, controllers and routes when trying
 to CRUD resources whose structure depends upon their relations:
 
 1.  [**1:n (one-to-many) relationships**: *a `Shelf` has many `Book`s*.][crud-1n]
-2.  [**n:n (many-to-many) relationships**: *a `Topic` has and belongs to*
-    *many `Book`s*.][crud-nn]
+2.  **n:n (many-to-many) relationships**: *a `Topic` has and belongs to*
+    *many `Book`s*.
 3.  [**multiple named relationships**: *a `User` has many `Book`s they've created,*
     *and habtm `Book`s they've "favorited."*][crud-mu]
 4.  **self referential relationships**:
