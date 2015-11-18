@@ -192,7 +192,7 @@ We have two options to fix this (if we find it a problem):
 
 1.  **We can add an "alias,"** or another method that does the same 
     thing as this method but has a more clear, semantic meaning, or …
-2.  **we can also rename this method**.
+2.  **we can rename this method,** like we did with the `hatbm` one.
 
 We will start by **renaming** the method:
 
@@ -279,12 +279,16 @@ class User < ActiveRecord::Base
   has_many :books
   
   has_many :favorites
-  has_many :favorite_books, class_name: "Book", 
-                            through:    :favorites
+  has_many :favorite_books, through: :favorites,
+                            source:  :book
 
   alias_attribute :created_books, :books
 end
 ```
+
+The `source` option here, instead of the `class_name` options, is used
+because we are telling Rails that `Favorite` has a method `book` that
+the `has_many :through` will call to access a given favorite's book.
 
 [For more information on the `alias_attribute` method, see above.][alias]
 
@@ -296,8 +300,8 @@ class Book < ActiveRecord::Base
   belongs_to :created_by, class_name: "User"
 
   has_many :favorites
-  has_many :favorited_by, class_name: "User",
-                          through:    :favorites
+  has_many :favorited_by, through: :favorites,
+                          source:  :user
 end
 ```
 
@@ -332,41 +336,72 @@ book.favorited_by
 
 ### Routes
 
-For the most part, since the related, "first-class" models are 
-independent, they can exist side-by-side in the routes.
+Just like with the n:n routes, we'll want to be able to CRUD our
+indepenedent models seperately, while also indexing based on their
+`habtm` or `has_many :through` relationships:
 
 **`/config/routes.rb`:**
 
 ```ruby
-  resources :posts
-  resources :topics
+  resources :users do
+    resources :books, only: [:index]
+  end
+  resources :books do
+    resources :users, only: [:index]
+  end
 ```
 
-If you wanted to add or remove a topic from a post, for example, that
-would simply be an update to your post, ie `PUT /posts/1` with the
-post's form's data…
+But now we have more semantic names for these relationships, and need
+to differentiate between the types of relationships!
 
-The one place in which it may make sense to nest (relate) these routes
-is with index: ie, list (index) all the topics in a post, or list (index)
-all the posts in a topic. This can be done with:
+We can do this a similar way to above: using options to change the Rails
+defaults. You can check out 
+[how to customize routes in the Rails Guides][rg-routes-custom].
 
 ```ruby
-  resources :posts do
-    resources :topics, only: [:index]
+  resources :users do
+    resources :created_books, only:       [:index],
+                              controller: :books
+
+    resources :favorites, only:       [:index],
+                          controller: :books
   end
-  resources :topics do
-    resources :posts, only: [:index]
+
+  resources :books do
+    resources :favorited_by, only:       [:index],
+                             controller: :users
   end
 ```
 
-The routes would be:
+This sets up the following routes:
 
 ```
-GET /posts/1/topics # all the topics in a post
-GET /topics/1/posts # all of the posts in a topic
+                 Prefix Verb   URI Pattern                             Controller#Action
+     user_created_books GET    /users/:user_id/created_books(.:format) books#index
+         user_favorites GET    /users/:user_id/favorites(.:format)     books#index
+                  users GET    /users(.:format)                        users#index
+                        POST   /users(.:format)                        users#create
+               new_user GET    /users/new(.:format)                    users#new
+              edit_user GET    /users/:id/edit(.:format)               users#edit
+                   user GET    /users/:id(.:format)                    users#show
+                        PATCH  /users/:id(.:format)                    users#update
+                        PUT    /users/:id(.:format)                    users#update
+                        DELETE /users/:id(.:format)                    users#destroy
+book_favorited_by_index GET    /books/:book_id/favorited_by(.:format)  users#index
+                  books GET    /books(.:format)                        books#index
+                        POST   /books(.:format)                        books#create
+               new_book GET    /books/new(.:format)                    books#new
+              edit_book GET    /books/:id/edit(.:format)               books#edit
+                   book GET    /books/:id(.:format)                    books#show
+                        PATCH  /books/:id(.:format)                    books#update
+                        PUT    /books/:id(.:format)                    books#update
+                        DELETE /books/:id(.:format)                    books#destroy
 ```
 
-To explore nested routes further, [check out the Rails Guides][rg-routes].
+As you can see, that sends them all to just the two controllers, 
+`UsersController` and `BooksController`. You may actually find it useful
+to create extra controllers to encapsulate the logic, but that is up
+to you!
 
 <!-- LINKS -->
 
@@ -381,8 +416,8 @@ To explore nested routes further, [check out the Rails Guides][rg-routes].
 [erd-basic-normalized]: /assets/img-crud-related-multiple-basic-normalized.jpg
 [erd-complete]:         /assets/img-crud-related-multiple-complete.jpg
 
-[rg-ar-assoc]: http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
-<!-- [rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources -->
+[rg-ar-assoc]:      http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
+[rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
 
 [ra-ar-assoc]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
 [ra-has-many]: http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
