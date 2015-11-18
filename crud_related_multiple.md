@@ -11,7 +11,7 @@ to CRUD resources whose structure depends upon their relations:
 1.  [**1:n (one-to-many) relationships**: *a `Shelf` has many `Book`s*.][crud-1n]
 2.  [**n:n (many-to-many) relationships**: *a `Topic` has and belongs to many `Book`s*.][crud-nn]
 3.  **multiple, named relationships**: *a `User` has many `Book`s they've created,*
-    *and has and belongs to many favorite `Book`s they've "favorited."*
+    *and habtm `Book`s they've "favorited."*
 4.  **self referential relationships**:
     - ***(1:n)*** *a `User` has many `User`s as* ***followers***, and
     - ***(n:n)*** *a `User` has and belongs to many `User`s as* ***friends***.
@@ -259,8 +259,8 @@ To explore nested routes further, [check out the Rails Guides][rg-routes].
 [crud-mu]: /crud_related_multiple.md
 [crud-se]: /crud_related_self.md
 
-[erd-basic]:            
-[erd-basic-normalized]: 
-[erd-complete]:         
+[erd-basic]:            /assets/img-crud-related-multiple-basic.jpg
+[erd-basic-normalized]: /assets/img-crud-related-multiple-basic-normalized.jpg
+[erd-complete]:         /assets/img-crud-related-multiple-complete.jpg
 
 [rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources
