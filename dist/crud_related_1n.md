@@ -8,13 +8,14 @@ To that end, we have four examples/walkthroughs to show you about
 how to structure the models, views, controllers and routes when trying
 to CRUD resources whose structure depends upon their relations:
 
-1.  **1:n (one-to-many) relationships**: *a `Shelf` has many `Book`s*.
-2.  [**n:n (many-to-many) relationships**: *a `Topic` has and belongs to many `Book`s*.][crud-nn]
+1.  [**1:n (one-to-many) relationships**: *a `Shelf` has many `Book`s*.][crud-1n]
+2.  [**n:n (many-to-many) relationships**: *a `Topic` has and belongs to*
+    *many `Book`s*.][crud-nn]
 3.  [**multiple named relationships**: *a `User` has many `Book`s they've created,*
     *and habtm `Book`s they've "favorited."*][crud-mu]
 4.  **self referential relationships**:
-    - ***(1:n)*** *a `User` has many `User`s as* ***followers***, and
-    - ***(n:n)*** *a `User` has and belongs to many `User`s as* ***friends***.
+    - [***(1:n)*** *a `User` has many `User`s as* ***followers***][crud-s1], and
+    - [***(n:n)*** *a `User` has and belongs to many `User`s as* ***friends***][crud-sn].
 
 ## One-to-many (*1:n*)
 
@@ -442,5 +443,3 @@ The new `form_for` looks like:
 
 [html-forms]:   https://gist.github.com/h4w5/8848398
 [so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
-
-
