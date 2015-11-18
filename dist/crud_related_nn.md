@@ -23,13 +23,13 @@ Quite often we need to relate models to one another not in the simple,
 **1:n** (one-to-many) format, but in the more complex **n:n** 
 (many-to-many) format. For our example here, we will use:
 
-![ERD][erd-link]
+![ERD][erd-nn]
 
 We already know that this relationship, when defined in a relational
 database, needs to be **normalized**, or turned into a series of 1:n
 relationships. For the example, this would look like:
 
-![Normalized ERD][erd-normal-link]
+![Normalized ERD][erd-normal]
 
 This **needs to be done at the database level**, no matter what.
 
@@ -45,7 +45,7 @@ different ways:
     model can be given their own name, for example `categories` and
     `Category`, like:
 
-    ![Link-through ERD][erd-thru-link]
+    ![Link-through ERD][erd-thru]
     
     Now you define the standard 1:n relationships (*a post `has_many` 
     categories, and a category `belongs_to` a post*, and *a topic 
@@ -550,25 +550,39 @@ And remember the `posts#create` from above? This is why we need it:
 
 <!-- LINKS -->
 
-[crud-1n]: /crud_related_1n.md
-[crud-nn]: /crud_related_nn.md
-[crud-mu]: /crud_related_multiple.md
-[crud-se]: /crud_related_self.md
+[alias]: #alias
 
-[erd-link]:        /assets/img-crud-related-nn.jpg
-[erd-normal-link]: /assets/img-crud-related-nn-normalized.jpg
-[erd-thru-link]:   /assets/img-crud-related-nn-through.jpg
+[crud-1n]: crud_related_1n.md
+[crud-nn]: crud_related_nn.md
+[crud-mu]: crud_related_multiple.md
+[crud-se]: crud_related_self.md
 
-[rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources
-[rg-assoc]:  http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many
-[rg-habtm]:  http://guides.rubyonrails.org/association_basics.html#the-has-and-belongs-to-many-association
-[rg-thru]:   http://guides.rubyonrails.org/association_basics.html#the-has-many-through-association
+[erd-1n]:               assets/img-crud-related-1n.jpg
+[erd-1n-user]:          assets/img-crud-related-1n-user.jpg
+[erd-nn]:               assets/img-crud-related-nn.jpg
+[erd-normal]:           assets/img-crud-related-nn-normalized.jpg
+[erd-thru]:             assets/img-crud-related-nn-through.jpg
+[erd-basic]:            assets/img-crud-related-multiple-basic.jpg
+[erd-basic-normalized]: assets/img-crud-related-multiple-basic-normalized.jpg
+[erd-complete]:         assets/img-crud-related-multiple-complete.jpg
 
-[html-forms]:   https://gist.github.com/h4w5/8848398
-[so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
+[rg-routes]:        http://guides.rubyonrails.org/routing.html#nested-resources
+[rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
+[rg-assoc]:         http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many
+[rg-has-many]:      http://guides.rubyonrails.org/association_basics.html#the-has-many-association
+[rg-belongs-to]:    http://guides.rubyonrails.org/association_basics.html#the-belongs-to-association
+[rg-habtm]:         http://guides.rubyonrails.org/association_basics.html#the-has-and-belongs-to-many-association
+[rg-thru]:          http://guides.rubyonrails.org/association_basics.html#the-has-many-through-association
+[rg-ar-assoc]:      http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
+
 [ra-formopts]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html
 [ra-tags]:      http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html
 [ra-ff]:        http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html
 [ra-tag-check]: http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-check_box_tag
 [ra-ff-check]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-check_box
+[ra-ar-assoc]:  http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
+[ra-has-many]:  http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
+
+[html-forms]:   https://gist.github.com/h4w5/8848398
+[so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
 

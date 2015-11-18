@@ -23,7 +23,7 @@ a relational structure is **1:n** (one-to-many). It's everywhere! Most of
 the relationships we are going to deal with are straightforward 1:n. A
 simple example is:
 
-![ERD][erd-link]
+![ERD][erd-1n]
 
 …that is, in the language of Rails, **a shelf `has_many` books, and a book
 `belongs_to` a shelf**. Rails uses the terms (and methods) `has_many` and
@@ -36,7 +36,7 @@ That exception is when two things are true:
 - the CRUDing logic states that the *current, logged-in user* is the only
   one who can relate to the dependent, `belongs_to` entity.
 
-![ERD][erd-user-link]
+![ERD][erd-1n-user]
 
 When this is the case, you follow only *some* of the below directions:
 
@@ -159,8 +159,8 @@ class Shelf < ActiveRecord::Base
 end
 ```
 
-To find out more, read the Rails Guides about [`has_many`][rails-has-many]
-and [`belongs_to`][rails-belongs-to].
+To find out more, read the Rails Guides about [`has_many`][rg-has-many]
+and [`belongs_to`][rg-belongs-to].
 
 ### Routes
 
@@ -283,7 +283,7 @@ new_shelf_book GET    /shelves/:shelf_id/books/new(.:format) books#new
 **Don't create all of these routes, just use it as a template for the**
 **routes you are going to define!**
 
-To explore nested routes further, [check out the Rails Guides][rails-routes].
+To explore nested routes further, [check out the Rails Guides][rg-routes].
 
 ### Controllers
 
@@ -407,15 +407,40 @@ The new `form_for` looks like:
 
 <!-- LINKS -->
 
-[crud-1n]: /crud_related_1n.md
-[crud-nn]: /crud_related_nn.md
-[crud-mu]: /crud_related_multiple.md
-[crud-se]: /crud_related_self.md
+[alias]: #alias
 
-[erd-link]:         /assets/img-crud-related-1n.jpg
-[erd-user-link]:    /assets/img-crud-related-1n-user.jpg
+[crud-1n]: crud_related_1n.md
+[crud-nn]: crud_related_nn.md
+[crud-mu]: crud_related_multiple.md
+[crud-se]: crud_related_self.md
 
-[rails-routes]:     http://guides.rubyonrails.org/routing.html#nested-resources
-[rails-has-many]:   http://guides.rubyonrails.org/association_basics.html#the-has-many-association
-[rails-belongs-to]: http://guides.rubyonrails.org/association_basics.html#the-belongs-to-association
+[erd-1n]:               assets/img-crud-related-1n.jpg
+[erd-1n-user]:          assets/img-crud-related-1n-user.jpg
+[erd-nn]:               assets/img-crud-related-nn.jpg
+[erd-normal]:           assets/img-crud-related-nn-normalized.jpg
+[erd-thru]:             assets/img-crud-related-nn-through.jpg
+[erd-basic]:            assets/img-crud-related-multiple-basic.jpg
+[erd-basic-normalized]: assets/img-crud-related-multiple-basic-normalized.jpg
+[erd-complete]:         assets/img-crud-related-multiple-complete.jpg
+
+[rg-routes]:        http://guides.rubyonrails.org/routing.html#nested-resources
+[rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
+[rg-assoc]:         http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many
+[rg-has-many]:      http://guides.rubyonrails.org/association_basics.html#the-has-many-association
+[rg-belongs-to]:    http://guides.rubyonrails.org/association_basics.html#the-belongs-to-association
+[rg-habtm]:         http://guides.rubyonrails.org/association_basics.html#the-has-and-belongs-to-many-association
+[rg-thru]:          http://guides.rubyonrails.org/association_basics.html#the-has-many-through-association
+[rg-ar-assoc]:      http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
+
+[ra-formopts]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html
+[ra-tags]:      http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html
+[ra-ff]:        http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html
+[ra-tag-check]: http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-check_box_tag
+[ra-ff-check]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-check_box
+[ra-ar-assoc]:  http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
+[ra-has-many]:  http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
+
+[html-forms]:   https://gist.github.com/h4w5/8848398
+[so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
+
 

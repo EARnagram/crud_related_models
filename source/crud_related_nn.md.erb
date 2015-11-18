@@ -23,13 +23,13 @@ Quite often we need to relate models to one another not in the simple,
 **1:n** (one-to-many) format, but in the more complex **n:n** 
 (many-to-many) format. For our example here, we will use:
 
-![ERD][erd-link]
+![ERD][erd-nn]
 
 We already know that this relationship, when defined in a relational
 database, needs to be **normalized**, or turned into a series of 1:n
 relationships. For the example, this would look like:
 
-![Normalized ERD][erd-normal-link]
+![Normalized ERD][erd-normal]
 
 This **needs to be done at the database level**, no matter what.
 
@@ -45,7 +45,7 @@ different ways:
     model can be given their own name, for example `categories` and
     `Category`, like:
 
-    ![Link-through ERD][erd-thru-link]
+    ![Link-through ERD][erd-thru]
     
     Now you define the standard 1:n relationships (*a post `has_many` 
     categories, and a category `belongs_to` a post*, and *a topic 
@@ -440,15 +440,15 @@ This uses a built-in "form options helper" (note that it **doesn't** use
 or **`/app/views/books/_form.html.erb`:**
 
 ```html
-  <%= form_for @post do |f| %>
+  <%%= form_for @post do |f| %>
     <!-- … -->
     <div class="field">
       <div class="input-group">
         <h5>Topics</h5>
-        <%= collection_check_boxes :post, :topic_ids, @topics, :id, :name %>
+        <%%= collection_check_boxes :post, :topic_ids, @topics, :id, :name %>
     </div>
     <!-- … -->
-  <% end %>
+  <%% end %>
 ```
 
 For more general ways to create checkboxes using `form_for#check_box` a
@@ -464,16 +464,16 @@ This uses a built-in "form options helper" (note that it **doesn't** use
 [can be found in the Rails API][ra-formopts].
 
 ```html
-  <%= form_for @post do |f| %>
+  <%%= form_for @post do |f| %>
     <!-- … -->
     <div class="field">
       <div class="input-group">
         <h5>Topics</h5>
-        <%= collection_select :post, :topic_ids, @topics, :id, :name, {}, multiple: true %>
+        <%%= collection_select :post, :topic_ids, @topics, :id, :name, {}, multiple: true %>
       </div>
     </div>
     <!-- … -->
-  <% end %>
+  <%% end %>
 ```
 
 **Note: very often, you will want to use `<select>` and `<option>` tags 
@@ -500,14 +500,14 @@ The text, when submitted, will be split in the controller and turned
 in to topic objects that are added to the topic list.
 
 ```html
-  <%= form_for @post do |f| %>
+  <%%= form_for @post do |f| %>
     <!-- … -->
     <div class="field">
-      <%= label :new_topic_names, "New topics, comma-separated" %><br>
-      <%= text_field_tag :new_topic_names %>
+      <%%= label :new_topic_names, "New topics, comma-separated" %><br>
+      <%%= text_field_tag :new_topic_names %>
     </div>
     <!-- … -->
-  <% end %>
+  <%% end %>
 ```
 
 **Note: we are using the tag helpers, not the `form_for` ones!** There
@@ -550,25 +550,4 @@ And remember the `posts#create` from above? This is why we need it:
 
 <!-- LINKS -->
 
-[crud-1n]: /crud_related_1n.md
-[crud-nn]: /crud_related_nn.md
-[crud-mu]: /crud_related_multiple.md
-[crud-se]: /crud_related_self.md
-
-[erd-link]:        /assets/img-crud-related-nn.jpg
-[erd-normal-link]: /assets/img-crud-related-nn-normalized.jpg
-[erd-thru-link]:   /assets/img-crud-related-nn-through.jpg
-
-[rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources
-[rg-assoc]:  http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many
-[rg-habtm]:  http://guides.rubyonrails.org/association_basics.html#the-has-and-belongs-to-many-association
-[rg-thru]:   http://guides.rubyonrails.org/association_basics.html#the-has-many-through-association
-
-[html-forms]:   https://gist.github.com/h4w5/8848398
-[so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
-[ra-formopts]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html
-[ra-tags]:      http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html
-[ra-ff]:        http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html
-[ra-tag-check]: http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-check_box_tag
-[ra-ff-check]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-check_box
-
+<%= include_partial("_links.md") %>

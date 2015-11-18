@@ -19,7 +19,7 @@ to CRUD resources whose structure depends upon their relations:
 ## Multiple, Named Relationships
 
 We often will have to relate the data in two separate models to
-one another via more than one relationship. A clear example of 
+one another via more than one relationship. A clear example of
 this is in applications where users create and share information,
 interacting with one another's creations.
 
@@ -56,15 +56,15 @@ use the former unless we have to use the latter; if there is any data
 or logic associated with a favorite itself (if the *favorite* is instead
 a *comment*, or a *tag*) for instance.
 
-Below we will take a look at how to set up the two different approaches 
-(`habtm` and `has_many :through`) in the migrations and models. Beyond 
-that, all interaction works the same (depending on the relationship) as 
+Below we will take a look at how to set up the two different approaches
+(`habtm` and `has_many :through`) in the migrations and models. Beyond
+that, all interaction works the same (depending on the relationship) as
 in the previous walkthroughs. We will, however, see an example set-up of
 the necessary routes to allow rich data interactions.
 
 ### Migrations
 
-For both of the formats, you could generate your "first-class" models 
+For both of the formats, you could generate your "first-class" models
 like this:
 
 ```
@@ -84,7 +84,7 @@ $ rails g migration CreateBooksUsers user:references book:references
 ```
 
 **Note: the order of the names is important!** Alphabetical: in this
-case, `books` before `users`. The output of the migration generator 
+case, `books` before `users`. The output of the migration generator
 looks like:
 
 ```ruby
@@ -113,13 +113,13 @@ $ rails g model Favorite user:references book:references
 migration!** We therefore use the model name style in the generator
 instead of the migration name style.
 
-See the [n:n examples][crud-nn] for more detail on generating 
+See the [n:n examples][crud-nn] for more detail on generating
 *join models*.
 
 ### Models
 
 The major point here is to explore the ActiveRecord API a little further,
-specifically the format of the 
+specifically the format of the
 [`belongs_to`, `has_many`, and `habtm`][ra-ar-assoc] methods. Our example
 will use the [`has_many` method][ra-has-many].
 
@@ -135,7 +135,7 @@ bob.puppies
 #=> []
 ```
 
-We **are not** saying *Relate the current model to the model named 
+We **are not** saying *Relate the current model to the model named
 `Puppy`*! This is a common misperception!
 
 Instead, we are saying something more complex:
@@ -153,12 +153,12 @@ Instead, we are saying something more complex:
 > If there is no option that names column in the table to look to for
 > the foreign key, assume the column's name is `owner_id`.
 
-Thus: the symbol we pass to `has_many` is the ***name of the method it 
+Thus: the symbol we pass to `has_many` is the ***name of the method it
 creates***! Everything else is set to Rails conventional defaults:
-model class name, table name, and foreign key column name. And we can 
+model class name, table name, and foreign key column name. And we can
 change any of them!
 
-There is information about the options you can pass to these methods in 
+There is information about the options you can pass to these methods in
 the API guides linked above, but even better examples are in the
 **[Rails Guides][rg-ar-assoc]**.
 
@@ -179,8 +179,8 @@ end
 ```
 
 <div id="alias"></div>
-**However, we have a problem!** the method that references the 
-`has_many` / `belongs_to` relationship may be ambiguous! Does it mean 
+**However, we have a problem!** the method that references the
+`has_many` / `belongs_to` relationship may be ambiguous! Does it mean
 *created* books, or *favorite* books?
 
 ```ruby
@@ -190,7 +190,7 @@ user.books
 
 We have two options to fix this (if we find it a problem):
 
-1.  **We can add an "alias,"** or another method that does the same 
+1.  **We can add an "alias,"** or another method that does the same
     thing as this method but has a more clear, semantic meaning, or …
 2.  **we can rename this method,** like we did with the `hatbm` one.
 
@@ -260,7 +260,7 @@ book.favorited_by
 Assuming the migrations above ran correctly, we will have the models
 `User`, `Book`, and `Favorite`.
 
-See the [n:n `has_many :through` examples][crud-nn] for more detail on 
+See the [n:n `has_many :through` examples][crud-nn] for more detail on
 the below syntax, if necessary.
 
 **`/app/models/favorite.rb`**:
@@ -277,7 +277,7 @@ end
 ```ruby
 class User < ActiveRecord::Base
   has_many :books
-  
+
   has_many :favorites
   has_many :favorite_books, through: :favorites,
                             source:  :book
@@ -308,8 +308,8 @@ end
 After this you can use the following ActiveRecord commands:
 
 ```ruby
-user = User.create email:   "pj@ga.co", 
-                   name:    "PJ", 
+user = User.create email:   "pj@ga.co",
+                   name:    "PJ",
                    born_on: Date.parse("9/10/1990")
 
 user.books.create title: "The Great Gatsby", description: "boring!"
@@ -355,7 +355,7 @@ But now we have more semantic names for these relationships, and need
 to differentiate between the types of relationships!
 
 We can do this a similar way to above: using options to change the Rails
-defaults. You can check out 
+defaults. You can check out
 [how to customize routes in the Rails Guides][rg-routes-custom].
 
 ```ruby
@@ -398,26 +398,11 @@ book_favorited_by_index GET    /books/:book_id/favorited_by(.:format)  users#ind
                         DELETE /books/:id(.:format)                    books#destroy
 ```
 
-As you can see, that sends them all to just the two controllers, 
+As you can see, that sends them all to just the two controllers,
 `UsersController` and `BooksController`. You may actually find it useful
 to create extra controllers to encapsulate the logic, but that is up
 to you!
 
 <!-- LINKS -->
 
-[alias]: #alias
-
-[crud-1n]: /crud_related_1n.md
-[crud-nn]: /crud_related_nn.md
-[crud-mu]: /crud_related_multiple.md
-[crud-se]: /crud_related_self.md
-
-[erd-basic]:            /assets/img-crud-related-multiple-basic.jpg
-[erd-basic-normalized]: /assets/img-crud-related-multiple-basic-normalized.jpg
-[erd-complete]:         /assets/img-crud-related-multiple-complete.jpg
-
-[rg-ar-assoc]:      http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
-[rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
-
-[ra-ar-assoc]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
-[ra-has-many]: http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
+<%= include_partial("_links.md") %>
