@@ -27,8 +27,8 @@ For our example here, we will use:
 
 ![Basic ERD][erd-basic]
 
-A way to describe this is: users create books, and users also
-favorite books that other users (or themselves) have created.
+A way to describe this is: **users create books, and users also
+favorite books that other users (or themselves) have created.**
 
 - **[Understanding and Context](#understanding-and-context)**
 - **[Migrations](#migrations)**
@@ -44,23 +44,23 @@ relationship here, we will see:
 
 ![Normalized ERD][erd-basic-normalized]
 
-We already know that this relationship, when defined in a relational
-database, needs to be **normalized**, or turned into a series of 1:n
-relationships. For the example, this would look like:
-
 And we know from the n:n walkthrough, that there are two ways to
 think about this relationship, as a `habtm` or as a `has_many :through`.
-
-The two options, next to each other look like:
+The two options, next to each other, look like:
 
 ![Normalized ERD][erd-complete]
 
-Below we will take a look at how to set up the two 
-different approaches (`habtm` and `has_many :through`) in
-the migrations and models. Beyond that, all interaction
-works the same (depending on the relationship) as in the
-previous walkthroughs. We will, however, see an example
-set up of the necessary routes to allow rich data interactions.
+As we can see, there's significantly less complexity for the `habtm`
+form than with the `has_many :through` form… Generally, we would rather
+use the former unless we have to use the latter; if there is any data
+or logic associated with a favorite itself (if the *favorite* is instead
+a *comment*, or a *tag*) for instance.
+
+Below we will take a look at how to set up the two different approaches 
+(`habtm` and `has_many :through`) in the migrations and models. Beyond 
+that, all interaction works the same (depending on the relationship) as 
+in the previous walkthroughs. We will, however, see an example set-up of
+the necessary routes to allow rich data interactions.
 
 [Rails Guides to models links...][]
 
