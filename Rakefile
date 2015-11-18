@@ -4,7 +4,7 @@ include FileUtils
 
 def read_contents(file)
   if File.exists? file
-    File.read(file)
+    File.read(file).strip
   else
     ""
   end
@@ -39,7 +39,7 @@ task :build do
   rm_rf Dir.glob('dist/*')
 
   mkdir_p "dist/assets"
-  cp_r "source/assets", "dist/assets"
+  cp_r "source/assets", "dist"
 
   Dir.glob("source/*[^assets]").map { |f| File.new f }.each do |file|
     if is_erb(file) && !is_partial(file)
