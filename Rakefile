@@ -22,16 +22,16 @@ def basename_without_erb(file)
   File.basename(file)[0..-5]
 end
 
-def erb_parse(file)
+def erb_parse(file, log=true)
   file_name = file.is_a?(File) ? File.absolute_path(file) : file
-  puts "Parsing as ERB: #{file_name}"
+  puts "Parsing as ERB: #{file_name}" if log
   ERB.new(read_contents(file_name)).result(binding)
 end
 
 def include_partial(file)
   file_name = File.expand_path("../source/#{file}.erb", __FILE__)
-  puts "Including partial: #{file_name}"
-  erb_parse file_name
+  puts "  - Including partial: #{file_name}"
+  erb_parse file_name, false
 end
 
 desc "Build the files in /source and deposit in /dist"
@@ -46,8 +46,9 @@ task :build do
       contents    = erb_parse file
       destination = "dist/#{basename_without_erb(file)}"
       File.write(destination, contents)
-    else
-      cp file, "dist" unless is_partial(file)
+    elsif !is_partial(file)
+      cp file, "dist"
+      puts "Copied file #{File.absolute_path(file)}"
     end
   end
 end
