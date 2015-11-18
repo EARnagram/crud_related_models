@@ -62,157 +62,273 @@ that, all interaction works the same (depending on the relationship) as
 in the previous walkthroughs. We will, however, see an example set-up of
 the necessary routes to allow rich data interactions.
 
-[Rails Guides to models links...][]
-
 ### Migrations
 
-As stated above, both of the two "first-class" models in an n:n
-relationship are independent. The dependent entity bears the weight
-for holding the data about the related tables, and is where you need
-to focus attention.
-
-For both of the formats, you could generate your models like this:
+For both of the formats, you could generate your "first-class" models 
+like this:
 
 ```
-$ rails g model Topic name
-$ rails g model Post title body:text
+$ rails g model User email name born_on:date
+$ rails g model Book title description:text user:references
 ```
+
+Remember to add `user:references`! This sets up your first, `has_many`/
+`belongs_to` route.
 
 #### `habtm`
 
-To use the simpler `habtm` form of n:n relationships, you need to use
-that Rails naming magic! In this case, you create a table called a
-**join table** that holds the relationships. **A join table is named 
-like this: the two entities' *table names* in alphabetical order.**
-
-Thus, for the above, we would create the migration:
+Create the migration:
 
 ```
-$ rails g migration CreatePostsTopics post:references topic:references
+$ rails g migration CreateBooksUsers user:references book:references
 ```
 
-**Note: we are generating just the migration, not the model, and use the
-migration naming style for it!**
-
-The output of the migration generator looks like:
+**Note: the order of the names is important!** Alphabetical: in this
+case, `books` before `users`. The output of the migration generator 
+looks like:
 
 ```ruby
-class CreatePostsTopics < ActiveRecord::Migration
+class CreateBooksUsers < ActiveRecord::Migration
   def change
-    create_table :posts_topics do |t|
-      t.references :post, index: true, foreign_key: true
-      t.references :topic, index: true, foreign_key: true
+    create_table :books_users do |t|
+      t.references :user, index: true, foreign_key: true
+      t.references :book, index: true, foreign_key: true
     end
   end
 end
 ```
 
-See the [1:n examples][crud-1n] for more detail on how to create 
-`belongs_to`-style relationships in tables with the Rails generators.
+See the [n:n examples][crud-nn] for more detail on creating such a
+*join table*.
 
 #### `has_many :through`
 
-To use the somewhat more complicated, but more explicit, 
-`has_many :through` form of n:n relationships, you can do *the exact 
-same thing* with the database, but also generate a model. Ie:
+We would create the model:
 
 ```
-$ rails g model PostsTopics post:references topic:references
-```
-
-However, since we don't need to use the Rails naming magic that makes
-the relationship work (we instead are declaring the name of the 
-ActiveRecord model that relates the two together), we will often give
-the join table a better name if we can. Here, we are using this as
-an example:
-
-```
-$ rails g model Category post:references topic:references
+$ rails g model Favorite user:references book:references
 ```
 
 **Note: we are once again generating a model AND migration, not just a
 migration!** We therefore use the model name style in the generator
 instead of the migration name style.
 
+See the [n:n examples][crud-nn] for more detail on generating 
+*join models*.
+
 ### Models
+
+The major point here is to explore the ActiveRecord API a little further,
+specifically the format of the 
+[`belongs_to`, `has_many`, and `habtm`][ra-ar-assoc] methods. Our example
+will use the [`has_many` method][ra-has-many].
+
+When we see:
+
+```ruby
+class Owner < ActiveRecord::Base
+  has_many :puppies
+end
+
+bob = Owner.new
+bob.puppies
+#=> []
+```
+
+We **are not** saying *Relate the current model to the model named 
+`Puppy`*! This is a common misperception!
+
+Instead, we are saying something more complex:
+
+> Create a method on instances of the current model named `#puppies`.
+> This method will return AR models that are related to the current
+> model.
+>
+> If there is no option that names the AR model (class) this returns,
+> assume the model's class name is `Puppy`.
+>
+> If there is no option that names the table to look to for the foreign
+> key (relation information), assume the table's name is `puppies`.
+>
+> If there is no option that names column in the table to look to for
+> the foreign key, assume the column's name is `owner_id`.
+
+Thus: the symbol we pass to `has_many` is the ***name of the method it 
+creates***! Everything else is set to Rails conventional defaults:
+model class name, table name, and foreign key column name. And we can 
+change any of them!
+
+There is information about the options you can pass to these methods in 
+the API guides linked above, but even better examples are in the
+**[Rails Guides][rg-ar-assoc]**.
 
 #### `habtm`
 
-Here we see the *real* power of this format! Once creating the above
-migration, all we need to do is [add the following to the models][rg-habtm]:
+For our specific example, we want to rename to relations, and otherwise
+only need to pass options that tell ActiveRecord what the related model
+is. With this information, Rails will reset the defaults for table name
+(foreign key being the same).
 
-**`/app/models/topic.rb`:**
+**`/app/models/user.rb`:**
 
 ```ruby
-class Topic < ActiveRecord::Base
-  has_and_belongs_to_many :posts
+class User < ActiveRecord::Base
+  has_many :books
+  has_and_belongs_to_many :favorites, class_name: "Book"
 end
 ```
 
-**`/app/models/post.rb`:**
+<div id="alias"></div>
+**However, we have a problem!** the method that references the 
+`has_many` / `belongs_to` relationship may be ambiguous! Does it mean 
+*created* books, or *favorite* books?
 
 ```ruby
-class Post < ActiveRecord::Base
-  has_and_belongs_to_many :topics
+user.books
+#=> ?????????
+```
+
+We have two options to fix this (if we find it a problem):
+
+1.  **We can add an "alias,"** or another method that does the same 
+    thing as this method but has a more clear, semantic meaning, or …
+2.  **we can also rename this method**.
+
+We will start by **renaming** the method:
+
+```
+has_many :created_books, class_name: "Books"
+```
+
+If you like to create new books by using the syntax `#relation#create`
+then just renaming the method could lead to some weird semantics:
+
+```
+user.books.create title: "The Great Gatsby", description: "boring!"
+# vs, if you rename the basic method:
+user.created_books.create title: "Moby Dick", description: "very boring!"
+```
+
+Thus, we will **alias** that method:
+
+```ruby
+class User < ActiveRecord::Base
+  has_many :books
+  has_and_belongs_to_many :favorites, class_name: "Book"
+
+  alias_attribute :created_books, :books
 end
 ```
 
-After which you can use the following ActiveRecord commands:
+And we can write:
 
 ```ruby
-post = Post.find(1)
-post.topics
-#=> [<Topic>, …]
+user = User.find(1)
+
+user.books.create title: "The Great Gatsby", description: "boring!"
+user.created_books
+#=> [<Book @title="The Great Gatsby">, …]
+
+user.favorites.create title: "Moby Dick", description: "very boring!"
+user.favorites
+#=> [<Book @title="Moby Dick">, …]
 ```
 
-… and vice-versa.
+**`/app/models/book.rb`:**
+
+```ruby
+class Book < ActiveRecord::Base
+  belongs_to :created_by, class_name: "User"
+  has_and_belongs_to_many :favorited_by, class_name: "User"
+end
+```
+
+After this you can use the following ActiveRecord commands:
+
+```ruby
+book = Book.find(1)
+
+book.created_by
+#=> <User A>
+
+book.favorited_by
+#=> [<User B>, …]
+```
 
 #### `has_many :through`
 
-If we generated the join-table model correctly, it will be ready to go:
+Assuming the migrations above ran correctly, we will have the models
+`User`, `Book`, and `Favorite`.
 
-**`/app/models/post_topic.rb`** or **`/app/models/category.rb`**:
+See the [n:n `has_many :through` examples][crud-nn] for more detail on 
+the below syntax, if necessary.
+
+**`/app/models/favorite.rb`**:
 
 ```ruby
-class PostTopic < ActiveRecord::Base
-  belongs_to :post
-  belongs_to :topic
-end
-
-# or …
-
-class Category < ActiveRecord::Base
-  belongs_to :post
-  belongs_to :topic
+class Favorite < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :book
 end
 ```
 
-What we need to add to, then, are the n:n-related models! First we
-implement their relationship with the join-table model (which below
-we will assume is `Category`), then we relate through the join-table 
-model to the other target:
-
-**`/app/models/topic.rb`:**
+**`/app/models/user.rb`:**
 
 ```ruby
-class Topic < ActiveRecord::Base
-  has_many :categories
-  has_many :posts, through: :categories
+class User < ActiveRecord::Base
+  has_many :books
+  
+  has_many :favorites
+  has_many :favorite_books, class_name: "Book", 
+                            through:    :favorites
+
+  alias_attribute :created_books, :books
 end
 ```
 
-**`/app/models/post.rb`:**
+[For more information on the `alias_attribute` method, see above.][alias]
+
+
+**`/app/models/book.rb`:**
 
 ```ruby
-class Post < ActiveRecord::Base
-  has_many :categories
-  has_many :topics, through: :categories
+class Book < ActiveRecord::Base
+  belongs_to :created_by, class_name: "User"
+
+  has_many :favorites
+  has_many :favorited_by, class_name: "User",
+                          through:    :favorites
 end
 ```
 
-**Note: the order is important!** Finish the simple 1:n relationship
-(`has_many`/`belongs_to`) with the join-table model, then build a
-`has_many :through` through that relationship.
+After this you can use the following ActiveRecord commands:
+
+```ruby
+user = User.create email:   "pj@ga.co", 
+                   name:    "PJ", 
+                   born_on: Date.parse("9/10/1990")
+
+user.books.create title: "The Great Gatsby", description: "boring!"
+user.created_books
+#=> [<Book @title="The Great Gatsby">]
+
+book = Book.create title: "Moby Dick", description: "very boring!"
+
+Favorite.create user: user, book: book
+#=> <Favorite 1>
+
+book.favorites
+#=> [<Favorite 1>]
+
+user.favorites
+#=> [<Favorite 1>]
+
+user.favorite_books
+#=> [<Book @title="Moby Dick">]
+
+book.favorited_by
+#=> [<User @name="PJ">]
+```
 
 ### Routes
 
@@ -254,6 +370,8 @@ To explore nested routes further, [check out the Rails Guides][rg-routes].
 
 <!-- LINKS -->
 
+[alias]: #alias
+
 [crud-1n]: /crud_related_1n.md
 [crud-nn]: /crud_related_nn.md
 [crud-mu]: /crud_related_multiple.md
@@ -263,4 +381,8 @@ To explore nested routes further, [check out the Rails Guides][rg-routes].
 [erd-basic-normalized]: /assets/img-crud-related-multiple-basic-normalized.jpg
 [erd-complete]:         /assets/img-crud-related-multiple-complete.jpg
 
-[rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources
+[rg-ar-assoc]: http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
+<!-- [rg-routes]: http://guides.rubyonrails.org/routing.html#nested-resources -->
+
+[ra-ar-assoc]: http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
+[ra-has-many]: http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
