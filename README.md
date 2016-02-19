@@ -4,6 +4,10 @@ While we went in to CRUDing in depth with a single model, and we explored
 what it means to link, or **relate**, our models, we haven't shown you an
 example of some of the tools Rails gives us to CRUD related models.
 
+The [Rails Guides for ActiveRecord Associations][rails-guide] has great 
+information on how to do this! You need to read them! But they don't walk
+you through each step of implementing them in an app.
+
 To that end, we have four examples/walkthroughs to show you about
 how to structure the models, views, controllers and routes when trying
 to CRUD resources whose structure depends upon their relations:
@@ -24,3 +28,4 @@ to CRUD resources whose structure depends upon their relations:
 [crud-mu]: /dist/crud_related_multiple.md
 [crud-s1]: /dist/crud_related_self_1n.md
 [crud-sn]: /dist/crud_related_self_nn.md
+[rails-guide]: http://guides.rubyonrails.org/association_basics.html
