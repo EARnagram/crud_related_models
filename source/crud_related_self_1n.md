@@ -4,8 +4,8 @@
 
 ## Self References: a User has many Users as followers
 
-Often we will need to self-reference a model to define relationships 
-between instances of the model. 
+Often we will need to self reference a model and define relationships 
+between instances of the same model.
 
 ![ERD][erd-self-ref-1n]
 
@@ -13,7 +13,7 @@ While this resembles a __1:n__ relationship, it will act much more
 similarly to a __n:n__ relationship with a through table.
 
 This 1:n relationship has a `through` relationship to another model to 
-keep track of the relationships between instances of the __same__ model.
+keep track of the relationships between instances.
 
 - **[Understanding and Context](#understanding-and-context)**
 - **[Migrations](#migrations)**
@@ -39,7 +39,7 @@ added table will speed up our database calls and make our work easier
 in the future.
 
 Below we will see how to create the migrations for the `:through` table,
-but we will not connect the two tables until later, in the models.
+but we will not connect the two tables until later in the models.
 
 ### Migrations
 
@@ -86,6 +86,16 @@ class CreateFollows < ActiveRecord::Migration
   end
 end
 ```
+
+Notice the *multiple-key index* at the end of the migration - this 
+ensures a User cannot follow a user more than once (let's keep the 
+obsessive stalkers at bay!). Because we will be finding the relationship
+based on User ids, we should add an index on EACH column for efficiency.
+
+> A database index is a data structure that improves the speed of 
+> operations in a table. Indexes can be created using one or more 
+> columns, providing the basis for both rapid random lookups and 
+> efficient ordering of access to records. 
 
 We then create the follows table in the usual fashion:
 
