@@ -7,7 +7,7 @@
 Often we will need to self-reference a model to define relationships 
 between instances of the model. 
 
-[ERD][erd-self-ref-1n]
+![ERD][erd-self-ref-1n]
 
 While this resembles a __1:n__ relationship, it will act much more 
 similarly to a __n:n__ relationship with a through table.
@@ -32,9 +32,14 @@ complexity due to a join table between the same model.__ The join table
 will hold the related ids while defining each id's characteristics in 
 the table.
 
-[ERD][erd-self-ref-1n]
+![ERD][erd-self-ref-1n]
 
+While the latter seems more complicated, we'll actually find that the 
+added table will speed up our database calls and make our work easier
+in the future.
 
+Below we will see how to create the migrations for the `:through` table,
+but we will not connect the two tables until later, in the models.
 
 ### Migrations
 
@@ -85,6 +90,9 @@ end
 We then create the follows table in the usual fashion:
 
 `$ rake db:migrate`
+
+We will now need to write our *1:n* relationship within both our `User` 
+model and our `Follow` model.
 
 ### Models
 
