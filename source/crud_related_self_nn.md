@@ -64,31 +64,78 @@ class CreateFriendships < ActiveRecord::Migration
   def change
     create_table :friendships do |t|
       t.integer :user_id
-      t.integer :friend_user_id
+      t.integer :friend_id
 
       t.timestamps null: false
     end
 
-    add_index :friendships, [:user_id, :friend_user_id], unique: true
-    add_index :friendships, [:friend_user_id, :user_id], unique: true
+    add_index :friendships, [:user_id, :friend_id], unique: true
+    add_index :friendships, [:friend_id, :user_id], unique: true
   end
 end
 ```
 
 Now that we have a way of finding our Friendships within our database we're
-ready to migrate.
+ready to migrate. Nothing needs to be added to our User's migration file.
 
-`rake db:migrate`
+`$ rake db:migrate`
 
 Now, lets handle the relationships between our User model and Friendship model.
 
 ### Models
 
-...
+The additional index for database queries actually makes our models much more
+simple. While we know we must implement a `n:n` relationship, we also know we
+must use our Friendship model as a join table.
+
+Let's first look at what our User model must add to implement the `:through`
+association.
+
+```ruby
+class User < ActiveRecord::Base
+
+  #...
+  has_many :friendships
+  has_many :friends, through: :friendships
+  #...
+end
+```
+
+We now have initialized the first of two ways to view the friendship - but what
+about from the other direction? Here's where that extra index comes in handy:
+
+```ruby
+class User < ActiveRecord::Base
+
+  #...
+  has_many :friendships
+  has_many :friends,             through: :friendships
+  has_many :inverse_friendships, class_name: "Friendship",
+                                 foreign_key: "friend_id"
+  has_many :inverse_friends,     through: :inverse_friendships,
+                                 source: :user
+  #...
+end
+```
+
+Now we can see we can make media queries using either user_id.
+
+We now need to create the corresponding associations in the Friendship model:
+
+```ruby
+class Friendship < ActiveRecord::Base
+
+  belongs_to :user
+  belongs_to :friend, :class_name => "User"
+end
+```
+
+In the Friendship model, we only need to attach either side of the friendship
+association. We're now ready to move onto routes!
 
 ### Routes
 
-...
+
 
 <!-- LINKS -->
 
