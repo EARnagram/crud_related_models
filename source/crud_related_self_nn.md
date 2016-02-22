@@ -47,7 +47,40 @@ friends in our site as well.
 
 ### Migrations
 
-...
+In order to make our migration, let's go ahead and create the model first -
+we'll add to it later.
+
+`$ rails g model Friendship user_id:integer friend_id:integer`
+
+This migration will only store two user_ids, however, it will store them in both
+directions. This gives us the ability to find friends and friends of friends.
+Additionally, the symmetrical indices will greatly speed up our database
+queries.
+
+Let's change the migration file and add in those indices!
+
+```ruby
+class CreateFriendships < ActiveRecord::Migration
+  def change
+    create_table :friendships do |t|
+      t.integer :user_id
+      t.integer :friend_user_id
+
+      t.timestamps null: false
+    end
+
+    add_index :friendships, [:user_id, :friend_user_id], unique: true
+    add_index :friendships, [:friend_user_id, :user_id], unique: true
+  end
+end
+```
+
+Now that we have a way of finding our Friendships within our database we're
+ready to migrate.
+
+`rake db:migrate`
+
+Now, lets handle the relationships between our User model and Friendship model.
 
 ### Models
 
