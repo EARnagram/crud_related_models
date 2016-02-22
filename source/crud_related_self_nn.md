@@ -135,7 +135,59 @@ association. We're now ready to move onto routes!
 
 ### Routes
 
+Luckily, most of the hard work is behind us - for the routes, we only need to
+make a `#create` and `#destroy` route for our friendships.
 
+Here's what we're looking for:
+
+| HTTP Request |    URL    |   Action  |      Named Route      |
+|:------------:|:---------:|:---------:|:---------------------:|
+| POST         | users/:id | create    | friendships_path(:id) |
+| DESTROY      | users/:id | destroy   | friendship_path(:id)  |
+
+Luckily, this is nothing but a limited `resources` in our routes:
+
+```ruby
+Rails.application.routes.draw do
+
+  #...
+  resources :friendships, only: [:create, :destroy]
+  #...
+end
+```
+
+We only need a create and destroy method for the join table, so those are all
+we need inside our FriendshipsController.
+
+```ruby
+class FriendshipsController < ApplicationController
+
+  def create
+    @friendship = current_user.friendships.build(:friend_id => params[:friend_id])
+    if @friendship.save
+      flash[:notice] = "Added friend."
+      redirect_to root_url
+    else
+      flash[:error] = "Unable to add friend."
+      redirect_to root_url
+    end
+  end
+
+  def destroy
+    @friendship = current_user.friendships.find(params[:id])
+    @friendship.destroy
+    flash[:notice] = "Removed friendship."
+    redirect_to current_user
+  end
+end
+```
+
+As we can see, we're building and destroy our relationships within our database
+by finding them through the parameters :id field.
+
+From here, you can build ways to confirm friendships, add logic to your views,
+and improve the flash messages. However, the `n:n` self-referencing assocation
+is now complete - feel free to use these routes in the way you see fit!
 
 <!-- LINKS -->
 
