@@ -1,10 +1,26 @@
 # CRUDing Related Models — Self References, n:n
 
 
-change back to underscore header.
 <%= include_partial("_header.md", {s_n: true}) %>
 
 ## Self References: a User habtm Users as friends
+
+Many CRUD apps need users to friend each other, making mutual connections
+between one another.  Unlike the previous Follow `1:n` relationship, the
+Friendship model will be a **symmetrical**/**bi-directional** self-referencing
+association.
+
+A good way to think of this is that, when "friending", _we create and destroy
+mutual relationships._ Unlike the `1:n`, we do not differentiate between
+two kinds of relationship. Both influencing each other in the same way,
+containing multiple friendships.
+
+- **[Understanding and Context](#understanding-and-context)**
+- **[Migrations](#migrations)**
+- **[Models](#models)**
+- **[Routes](#routes)**
+
+### Understanding and Context
 
 Unlike following, friendship is symmetrical, therefore creating a
 has_many_and_belongs_to relationship within one model. You may think we can
@@ -16,24 +32,18 @@ But, of course, that makes a nightmare of methods and terribly inefficient
 database queries.
 
 As with the previous self-referencing relationship, we'll of course use a join
-table. However, unlike the `1:n`, we'll need two attachments to the same model.
-This is due to the symmetrical nature of friendships.
+table.
 
 ![correct ERD][erd-self-ref-nn]
 
-You'll have to specify the name of the join table, as well as the joining
+Notice that unlike the `1:n`, we'll need two attachments to the same model.
+Due to the symmetrical nature of friendships we will need a more complex join
+table than the previous 1:n.
+
+We must specify the name of the join table, as well as the joining
 columns just like the `1:n` self-referential relationship. In addition, we'll
 need to create a flip-flop of the index, as we may need to locate friend's
 friends in our site as well.
-
-- **[Understanding and Context](#understanding-and-context)**
-- **[Migrations](#migrations)**
-- **[Models](#models)**
-- **[Routes](#routes)**
-
-### Understanding and Context
-
-...
 
 ### Migrations
 
