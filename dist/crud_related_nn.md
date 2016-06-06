@@ -4,6 +4,10 @@ While we went in to CRUDing in depth with a single model, and we explored
 what it means to link, or **relate**, our models, we haven't shown you an
 example of some of the tools Rails gives us to CRUD related models.
 
+The [Rails Guides for ActiveRecord Associations](http://guides.rubyonrails.org/association_basics.html)
+has great information on how to do this! You need to read them! But they 
+don't walk you through each step of implementing them in an app.
+
 To that end, we have four examples/walkthroughs to show you about
 how to structure the models, views, controllers and routes when trying
 to CRUD resources whose structure depends upon their relations:
@@ -16,6 +20,12 @@ to CRUD resources whose structure depends upon their relations:
 4.  **self referential relationships**:
     - [***(1:n)*** *a `User` has many `User`s as* ***followers***][crud-s1], and
     - [***(n:n)*** *a `User` has and belongs to many `User`s as* ***friends***][crud-sn].
+
+# CRUDing Related Models
+
+While we went in to CRUDing in depth with a single model, and we explored
+what it means to link, or **relate**, our models, we haven't shown you an
+example of some of the tools Rails gives us to CRUD related models.
 
 ## Many-to-many (*n:n*)
 
@@ -558,14 +568,18 @@ And remember the `posts#create` from above? This is why we need it:
 [crud-s1]: crud_related_self_1n.md
 [crud-sn]: crud_related_self_nn.md
 
-[erd-1n]:               assets/img-crud-related-1n.jpg
-[erd-1n-user]:          assets/img-crud-related-1n-user.jpg
-[erd-nn]:               assets/img-crud-related-nn.jpg
-[erd-normal]:           assets/img-crud-related-nn-normalized.jpg
-[erd-thru]:             assets/img-crud-related-nn-through.jpg
-[erd-basic]:            assets/img-crud-related-multiple-basic.jpg
-[erd-basic-normalized]: assets/img-crud-related-multiple-basic-normalized.jpg
-[erd-complete]:         assets/img-crud-related-multiple-complete.jpg
+[erd-1n]:                assets/img-crud-related-1n.jpg
+[erd-1n-user]:           assets/img-crud-related-1n-user.jpg
+[erd-nn]:                assets/img-crud-related-nn.jpg
+[erd-normal]:            assets/img-crud-related-nn-normalized.jpg
+[erd-thru]:              assets/img-crud-related-nn-through.jpg
+[erd-basic]:             assets/img-crud-related-multiple-basic.jpg
+[erd-basic-normalized]:  assets/img-crud-related-multiple-basic-normalized.jpg
+[erd-complete]:          assets/img-crud-related-multiple-complete.jpg
+[erd-self-ref-1n]:       assets/img-crud-related-self-referential-1n.png
+[erd-self-ref-idea-1n]:  assets/img-crud-related-self-referential-idea-1n.png
+[erd-self-ref-nn]:       assets/img-crud-related-self-referential-nn.png
+[erd-self-ref-idea-nn]:  assets/img-crud-related-self-referential-idea-nn.png
 
 [rg-routes]:        http://guides.rubyonrails.org/routing.html#nested-resources
 [rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
