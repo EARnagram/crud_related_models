@@ -1,6 +1,31 @@
 # CRUDing Related Models — Self References, 1:n
 
-<%= include_partial("_header.md", {s_one: true}) %>
+While we went in to CRUDing in depth with a single model, and we explored
+what it means to link, or **relate**, our models, we haven't shown you an
+example of some of the tools Rails gives us to CRUD related models.
+
+The [Rails Guides for ActiveRecord Associations](http://guides.rubyonrails.org/association_basics.html)
+has great information on how to do this! You need to read them! But they 
+don't walk you through each step of implementing them in an app.
+
+To that end, we have four examples/walkthroughs to show you about
+how to structure the models, views, controllers and routes when trying
+to CRUD resources whose structure depends upon their relations:
+
+1.  [**1:n (one-to-many) relationships**: *a `Shelf` has many `Book`s*.][crud-1n]
+2.  [**n:n (many-to-many) relationships**: *a `Topic` has and belongs to*
+    *many `Book`s*.][crud-nn]
+3.  [**multiple named relationships**: *a `User` has many `Book`s they've created,*
+    *and habtm `Book`s they've "favorited."*][crud-mu]
+4.  **self referential relationships**:
+    - ***(1:n)*** *a `User` has many `User`s as* ***followers***, and
+    - [***(n:n)*** *a `User` has and belongs to many `User`s as* ***friends***][crud-sn].
+
+# CRUDing Related Models
+
+While we went in to CRUDing in depth with a single model, and we explored
+what it means to link, or **relate**, our models, we haven't shown you an
+example of some of the tools Rails gives us to CRUD related models.
 
 ## Self References: a User has many Users as followers
 
@@ -310,4 +335,43 @@ methods to assist you in displaying information in your view!
 
 <!-- LINKS -->
 
-<%= include_partial("_links.md") %>
+[alias]: #alias
+
+[crud-1n]: crud_related_1n.md
+[crud-nn]: crud_related_nn.md
+[crud-mu]: crud_related_multiple.md
+[crud-s1]: crud_related_self_1n.md
+[crud-sn]: crud_related_self_nn.md
+
+[erd-1n]:                assets/img-crud-related-1n.jpg
+[erd-1n-user]:           assets/img-crud-related-1n-user.jpg
+[erd-nn]:                assets/img-crud-related-nn.jpg
+[erd-normal]:            assets/img-crud-related-nn-normalized.jpg
+[erd-thru]:              assets/img-crud-related-nn-through.jpg
+[erd-basic]:             assets/img-crud-related-multiple-basic.jpg
+[erd-basic-normalized]:  assets/img-crud-related-multiple-basic-normalized.jpg
+[erd-complete]:          assets/img-crud-related-multiple-complete.jpg
+[erd-self-ref-1n]:       assets/img-crud-related-self-referential-1n.png
+[erd-self-ref-idea-1n]:  assets/img-crud-related-self-referential-idea-1n.png
+[erd-self-ref-nn]:       assets/img-crud-related-self-referential-nn.png
+[erd-self-ref-idea-nn]:  assets/img-crud-related-self-referential-idea-nn.png
+
+[rg-routes]:        http://guides.rubyonrails.org/routing.html#nested-resources
+[rg-routes-custom]: http://guides.rubyonrails.org/routing.html#customizing-resourceful-routes
+[rg-assoc]:         http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many
+[rg-has-many]:      http://guides.rubyonrails.org/association_basics.html#the-has-many-association
+[rg-belongs-to]:    http://guides.rubyonrails.org/association_basics.html#the-belongs-to-association
+[rg-habtm]:         http://guides.rubyonrails.org/association_basics.html#the-has-and-belongs-to-many-association
+[rg-thru]:          http://guides.rubyonrails.org/association_basics.html#the-has-many-through-association
+[rg-ar-assoc]:      http://guides.rubyonrails.org/association_basics.html#detailed-association-reference
+
+[ra-formopts]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormOptionsHelper.html
+[ra-tags]:      http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html
+[ra-ff]:        http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html
+[ra-tag-check]: http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-check_box_tag
+[ra-ff-check]:  http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-check_box
+[ra-ar-assoc]:  http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html
+[ra-has-many]:  http://apidock.com/rails/ActiveRecord/Associations/ClassMethods/has_many
+
+[html-forms]:   https://gist.github.com/h4w5/8848398
+[so-post]:      http://stackoverflow.com/questions/21688200/rails-4-checkboxes-for-has-and-belongs-to-many-association
